@@ -94,6 +94,9 @@ func GetPackageDeps(rootPath turbopath.AbsolutePath, p *PackageDepsOptions) (map
 		result[filePath] = hash
 	}
 
+	if p.PackagePath.ToStringDuringMigration() == "apps/web" {
+		fmt.Printf("result %#v\n", result)
+	}
 	return result, nil
 }
 

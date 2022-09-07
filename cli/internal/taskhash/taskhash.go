@@ -79,10 +79,12 @@ func safeCompileIgnoreFile(filepath string) (*gitignore.GitIgnore, error) {
 }
 
 func (pfs *packageFileSpec) hash(pkg *fs.PackageJSON, repoRoot turbopath.AbsolutePath) (string, error) {
-	hashObject, pkgDepsErr := hashing.GetPackageDeps(repoRoot, &hashing.PackageDepsOptions{
+	xx := &hashing.PackageDepsOptions{
 		PackagePath:   pkg.Dir,
 		InputPatterns: pfs.inputs,
-	})
+	}
+
+	hashObject, pkgDepsErr := hashing.GetPackageDeps(repoRoot, xx)
 	if pkgDepsErr != nil {
 		manualHashObject, err := manuallyHashPackage(pkg, pfs.inputs, repoRoot)
 		if err != nil {
@@ -94,6 +96,11 @@ func (pfs *packageFileSpec) hash(pkg *fs.PackageJSON, repoRoot turbopath.Absolut
 	if otherErr != nil {
 		return "", otherErr
 	}
+
+	if pkg.Dir.ToStringDuringMigration() == "apps/web" {
+		fmt.Printf("hashOfFiles for apps/web: %#v\n", hashOfFiles)
+	}
+
 	return hashOfFiles, nil
 }
 
